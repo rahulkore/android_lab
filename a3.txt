@@ -1,0 +1,69 @@
+import random
+
+print("Generating credentials....")
+rand = bin(random.getrandbits(128))[2:]
+key = bin(random.getrandbits(128))[2:]
+
+f = open("aS.txt","w")
+f.write(str(rand)+"\n")
+f.write(str(key)+"\n")
+f.close()
+
+if input("Do u wish to do change the credentials send over sim?(Yes/No)") == 'Yes':
+    rand = bin(random.getrandbits(128))[2:]
+    key = bin(random.getrandbits(128))[2:]
+
+f = open("sim.txt",'w')
+f.write(str(rand)+"\n")
+f.write(str(key)+"\n")
+f.close()
+
+def combine(rand, key):
+    rleft = rand[:64]
+    rright = rand[64:]
+
+    kleft = key[:64]
+    kright = key[64:]
+
+    aleft = int(rleft,2)^int(kright,2)
+    aright = int(rright,2)^int(kleft,2)
+
+    a = bin(aleft^aright)[2:]
+    
+    ansleft = a[:32]
+    ansright = a[32:]
+
+    ans = int(ansleft,2)^int(ansright,2)
+    ans = bin(ans)[2:]
+
+    return ans
+
+def getInfo(name):
+    f = open(name,'r')
+    lines = []
+    for line in f:
+        lines.append(line[:-1])
+
+    rand, key = lines
+    return rand, key
+
+rand1, key1 = getInfo('sim.txt')
+rand2, key2 = getInfo('aS.txt')
+
+print("credentials at sim:")
+print("random number:",rand1)
+print("Key:",key1)
+
+print("credentials at Authentication Server:")
+print("random number:",rand2)
+print("Key:",key2)
+
+ans1 = combine(rand1, key1)
+print("result generated at sim:",ans1)
+ans2 = combine(rand2, key2)
+print("result generated at As:",ans2)
+
+if ans1 == ans2:
+    print("user is authenticated")
+else:
+    print("user is not authenticated")

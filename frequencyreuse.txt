@@ -1,0 +1,54 @@
+import turtle
+import math
+def drawHexagon(x, y, size = 100, text = 'a'):
+    t.penup()
+    t.goto(x, y)
+    t.pendown()
+
+    for i in range(6):
+        t.forward(size)
+        t.left(60)
+    
+    t.penup()    
+    t.goto(x+size/2, y+size*(3**0.5)/2)
+    t.pendown()
+    
+    t.write(text, align="center", font=("Arial", 16, "normal"))
+    t.penup()
+    
+def drawPattern(x, y, N, length, path):
+    for p in range(N):
+        x, y = way[path[p]][0]*length+x ,way[path[p]][1]*length+y
+        drawHexagon(x, y, size = length,text = str(p+1))
+        
+def createPattern(i, j, N, length ,path):
+    for s in range(6):
+        t.setpos(-50, -50)
+        
+        t.left(30+60*s)
+        t.forward(i*length*3**0.5)
+        t.left(60)
+        t.forward(j*length*3**0.5)
+        
+        t.right(30+60*s+60)
+        x, y = t.pos()
+
+        drawPattern(x,y,N,length, path)
+way = {'s':(0 , 0),
+       'u' :(0, 3**0.5),
+       'dr':(1+math.sin(math.radians(30)),-3**0.5/2),
+       'ur':(1+math.sin(math.radians(30)),3**0.5/2),
+       'd':(0, -3**0.5),
+       'dl':(-(1+math.sin(math.radians(30))),-3**0.5/2),
+       'ul':(-(1+math.sin(math.radians(30))),3**0.5/2),
+       }
+i, j = list(map(int,input("Enter values of i and j:").split()))
+t = turtle.Turtle()
+t.speed(100)
+x, y = -50, -50
+length = 40
+path = ['s', 'u','dr','d','dl','ul','u','u','ur','dr','dr','d','d','dl','dl']
+N = i**2 + i*j + j**2
+
+drawPattern(x, y, N, length, path)
+createPattern(i, j, N, length, path)
